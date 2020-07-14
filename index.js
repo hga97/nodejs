@@ -50,7 +50,6 @@ app.locals.blog = {
 
 // 添加模板必需的三个变量
 app.use(function (req, res, next) {
-  console.log('asd')
   res.locals.user = req.session.user
   res.locals.success = req.flash('success').toString()
   res.locals.error = req.flash('error').toString()
@@ -120,3 +119,14 @@ app.listen(config.port, function () {
 
 // 6、app.use 
 // 在path路径上安装中间件，每当请求的路径和该path匹配时，都会导致该中间件函数被执行
+
+// 7、数据库索引
+
+// 8、router.METHOD(path, [callback, ...] callback)
+// 你可以提供多个回调函数，它们的行为和中间件一样,调用 next() 传递给下一个中间件
+
+// 9、express-formidable表单插件
+// 表单普通字段挂载到req.fields
+// 表单上传后的文件挂载到req.files
+
+// 10、数据库检验？

@@ -16,6 +16,7 @@ router.post('/', checkNotLogin, function (req, res, next) {
   const name = req.fields.name
   const gender = req.fields.gender
   const bio = req.fields.bio
+  //path.sep 提供平台特定的路径片段分隔符("\\" 或 "/")
   const avatar = req.files.avatar.path.split(path.sep).pop()
   let password = req.fields.password
   const repassword = req.fields.repassword
@@ -72,6 +73,7 @@ router.post('/', checkNotLogin, function (req, res, next) {
     res.redirect('/posts')
   })
   .catch(function (e) {
+    console.log(e)
     // 注册失败，异步删除上传的头像
     fs.unlink(req.files.avatar.path)
     // 用户名被占用则跳回注册页，而不是错误页
@@ -81,7 +83,6 @@ router.post('/', checkNotLogin, function (req, res, next) {
     }
     next(e)
   })
-  
 })
 
 // console.log(__dirname,'signup.js__dirname')
