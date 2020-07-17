@@ -1,16 +1,14 @@
 const express = require('express')
 const router = express.Router()
 const PostModel = require("../models/posts")
-const {
-  render
-} = require('ejs')
-const posts = require('../models/posts')
+const CommentModel = require("../models/comments")
 const checkLogin = require('../middlewares/check').checkLogin
 
 // GET /posts 所有用户或者特定用户的文章页
 //   eg: GET /posts?author=xxx
 router.get('/', function (req, res, next) {
   const author = req.query.author
+
 
   PostModel.getPosts(author).then(function (posts) {
     res.render("posts", {
@@ -64,15 +62,18 @@ router.get('/:postId', function (req, res, next) {
   const postId = req.params.postId
   Promise.all([
     PostModel.getPostById(postId),
+    CommentModel.getComments(postId),
     PostModel.incPv(postId)
   ]).then(function (result) {
     const post = result[0];
+    const comments = result[1];
     if (!post) {
       throw new Error("该文章不存在")
     }
 
     res.render('post', {
-      post: post
+      post: post,
+      comments: comments
     })
   }).catch(next)
 })
@@ -153,7 +154,7 @@ router.get('/:postId/remove', checkLogin, function (req, res, next) {
       if (post.author._id.toString() !== author.toString()) {
         throw new Error('没有权限')
       }
-      PostModel.delPostById(postId)
+      PostModel.delPostById(postId,author)
         .then(function () {
           req.flash('success', '删除文章成功')
           // 删除成功后跳转到主页
